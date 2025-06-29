@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes" />
+  <title>PT Nusantara Jaya</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('img/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      width: 320px;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #002B5B;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #002B5B;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .main-app {
+      display: none;
+      flex-direction: row;
+    }
+
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background-color: #002B5B;
+      color: white;
+      padding: 10px 15px;
+      font-size: 20px;
+      border: none;
+      border-radius: 5px;
+      z-index: 1001;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #002B5B;
+      color: white;
+      padding: 30px 20px;
+      position: fixed;
+      height: 100%;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      left: 0;
+    }
+
+    .sidebar.hide {
+      left: -250px;
+    }
+
+    .sidebar .logo {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .sidebar h2 {
+      font-size: 22px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 15px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+      color: #00c3ff;
+    }
+
+    .main-content {
+      margin-left: 240px;
+      padding: 40px;
+      flex-grow: 1;
+      background-color: rgba(255, 255, 255, 0.92);
+      border-radius: 15px;
+      margin-top: 40px;
+      margin-right: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section h2 {
+      color: #002B5B;
+    }
+
+    .content-section p,
+    .content-section li {
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .company-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .company-info img {
+      width: 300px;
+      border-radius: 8px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .sidebar {
+        left: -250px;
+      }
+
+      .sidebar.show {
+        left: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+        margin-top: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-container" id="login">
+    <div class="login-box">
+      <h2>Login Pengguna</h2>
+      <input type="text" id="username" placeholder="Masukkan username" />
+      <input type="password" id="password" placeholder="Masukkan password" />
+      <button onclick="login()">Login</button>
+      <p style="margin-top: 10px;">Belum punya akun? <a href="#" onclick="showRegister()">Daftar</a></p>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="login-container" id="register" style="display: none;">
+    <div class="login-box">
+      <h2>Form Pendaftaran</h2>
+      <input type="text" id="reg-nama" placeholder="Nama Lengkap" />
+      <input type="text" id="reg-username" placeholder="Username" />
+      <input type="password" id="reg-password" placeholder="Password" />
+      <button onclick="daftar()">Daftar</button>
+      <p style="margin-top: 10px;">Sudah punya akun? <a href="#" onclick="showLogin()">Login</a></p>
+    </div>
+  </div>
+
+  <!-- APLIKASI UTAMA -->
+  <div class="main-app" id="app">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+    <div class="sidebar" id="sidebar">
+      <img src="img/logo.png.jpeg" class="logo" alt="Logo Perusahaan" />
+      <h2>PT Nusantara Jaya</h2>
+      <ul>
+        <li><a href="#" onclick="tampilkan('beranda')">Beranda</a></li>
+        <li><a href="#" onclick="tampilkan('tentang')">Tentang</a></li>
+        <li><a href="#" onclick="tampilkan('layanan')">Layanan</a></li>
+        <li><a href="#" onclick="tampilkan('kontak')">Kontak</a></li>
+        <li><a href="#" onclick="tampilkan('perusahaan')">Perusahaan</a></li>
+        <li><a href="#" onclick="tampilkan('lowongan')">Lowongan</a></li>
+        <li><a href="#" onclick="tampilkan('sertifikat')">Cek Sertifikat</a></li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <section id="beranda" class="content-section">
+  <h2 style="font-size: 32px; color: #002B5B;">Selamat Datang di PT Nusantara Jaya</h2>
+  <p style="font-size: 18px; line-height: 1.8;">
+    <strong>PT Nusantara Jaya</strong> adalah mitra strategis dalam transformasi digital dan inovasi teknologi di Indonesia.
+    Dengan semangat membangun negeri, kami hadir untuk menghadirkan solusi digital unggulan yang mendukung kemajuan perusahaan, pemerintah, dan masyarakat.
+  </p>
+
+  <div style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 30px;">
+    <div style="flex: 1; min-width: 280px;">
+      <img src="img/visi.jpg" alt="Visi" style="width: 100%; border-radius: 10px;">
+      <h3 style="color: #002B5B;">Visi Kami</h3>
+      <p>Mewujudkan Indonesia yang lebih maju melalui solusi teknologi yang inklusif dan berkelanjutan.</p>
+    </div>
+    <div style="flex: 1; min-width: 280px;">
+      <img src="img/misi.jpg" alt="Misi" style="width: 100%; border-radius: 10px;">
+      <h3 style="color: #002B5B;">Misi Kami</h3>
+      <ul>
+        <li>Mengembangkan teknologi berbasis kebutuhan lokal & global.</li>
+        <li>Mendukung SDM Indonesia dengan pelatihan dan pembinaan digital.</li>
+        <li>Menjadi mitra terpercaya bagi dunia usaha dan pemerintah.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top: 40px;">
+    <h3 style="color: #002B5B;">Keunggulan Kami</h3>
+    <ul style="font-size: 16px;">
+      <li>✅ Tim profesional berpengalaman dan berdedikasi.</li>
+      <li>✅ Solusi berbasis data, inovasi, dan tren masa depan.</li>
+      <li>✅ Proyek-proyek sukses di berbagai sektor: pemerintahan, pendidikan, energi, dan logistik.</li>
+    </ul>
+  </div>
+</section>
+
+      <section id="tentang" class="content-section">
+  <h2 style="font-size: 32px; color: #002B5B;">Tentang PT Nusantara Jaya</h2>
+  <p style="font-size: 18px; line-height: 1.8;">
+    PT Nusantara Jaya adalah perusahaan teknologi informasi terdepan yang berdedikasi pada inovasi dan digitalisasi sektor publik maupun swasta. Berdiri sejak tahun <strong>2020</strong>, kami telah membantu berbagai institusi di Indonesia dalam menciptakan solusi berbasis teknologi yang efisien, aman, dan modern.
+  </p>
+
+  <div style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 30px;">
+    <div style="flex: 1; min-width: 250px; background: #e8f3ff; padding: 20px; border-radius: 10px;">
+      <img src="img/visi.jpg" alt="Visi" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="color: #002B5B;">🌟 Visi Kami</h3>
+      <p>Menjadi pelopor transformasi digital nasional melalui layanan teknologi yang inovatif dan berdampak luas.</p>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: #e8f3ff; padding: 20px; border-radius: 10px;">
+      <img src="img/misi.jpg" alt="Misi" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="color: #002B5B;">🎯 Misi Kami</h3>
+      <ul style="padding-left: 20px;">
+        <li>Menghadirkan solusi IT terbaik bagi instansi pemerintah & perusahaan swasta.</li>
+        <li>Menjaga kualitas dan keamanan layanan dengan standar internasional.</li>
+        <li>Membangun kemitraan yang berkelanjutan dan saling menguntungkan.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+      <section id="layanan" class="content-section">
+  <h2 style="font-size: 32px; color: #002B5B;">Layanan Kami</h2>
+  <p style="font-size: 18px; line-height: 1.8;">
+    PT Nusantara Jaya memberikan berbagai layanan teknologi dan transformasi digital untuk mendukung pertumbuhan bisnis, instansi pemerintah, dan masyarakat modern.
+  </p>
+
+  <div style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 30px;">
+    <div style="flex: 1; min-width: 250px; background: #f5faff; padding: 20px; border-radius: 10px;">
+      <img src="img/web-dev.jpg" alt="Pengembangan Website" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="color: #002B5B;">🔹 Pengembangan Website</h3>
+      <p>Kami membangun website profesional, responsif, dan mudah dikelola sesuai kebutuhan klien.</p>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: #f5faff; padding: 20px; border-radius: 10px;">
+      <img src="img/app-dev.jpg" alt="Aplikasi Mobile/Web" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="color: #002B5B;">🔹 Pengembangan Aplikasi</h3>
+      <p>Aplikasi Android/iOS/web yang handal untuk menunjang produktivitas dan efisiensi perusahaan Anda.</p>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: #f5faff; padding: 20px; border-radius: 10px;">
+      <img src="img/it-consulting.jpg" alt="Konsultasi IT" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="color: #002B5B;">🔹 Konsultasi IT</h3>
+      <p>Bimbingan dan strategi transformasi digital, migrasi sistem, serta audit keamanan TI.</p>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: #f5faff; padding: 20px; border-radius: 10px;">
+      <img src="img/cloud.jpg" alt="Infrastruktur & Cloud" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="color: #002B5B;">🔹 Manajemen Infrastruktur</h3>
+      <p>Pengelolaan server, jaringan, data center, hingga layanan cloud dengan performa tinggi dan andal.</p>
+    </div>
+  </div>
+</section>
+
+      <section id="kontak" class="content-section">
+  <h2 style="font-size: 32px; color: #002B5B;">Hubungi Kami</h2>
+  <p style="font-size: 18px;">Kami siap menjawab pertanyaan dan membantu kebutuhan digital Anda. Jangan ragu untuk menghubungi kami.</p>
+
+  <div style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 30px;">
+    <div style="flex: 1; min-width: 280px;">
+      <h3 style="color: #002B5B;">📍 Alamat Kantor</h3>
+      <p>Jl. Nusanata No. 88, Jakarta Selatan, Indonesia</p>
+
+      <h3 style="color: #002B5B;">☎️ Telepon</h3>
+      <p>(021) 8890 7621</p>
+
+      <h3 style="color: #002B5B;">✉️ Email</h3>
+      <p>info@nusantarajayajaya.co.id</p>
+
+      <h3 style="color: #002B5B;">🕐 Jam Operasional</h3>
+      <p>Senin – Jumat, 08.00 – 17.00 WIB</p>
+    </div>
+
+    <div style="flex: 1; min-width: 280px;">
+      <h3 style="color: #002B5B;">💬 Kirim Pesan</h3>
+      <form onsubmit="event.preventDefault(); alert('Pesan berhasil dikirim!');" style="display: flex; flex-direction: column; gap: 10px;">
+        <input type="text" placeholder="Nama Anda" required style="padding: 10px; border-radius: 5px;">
+        <input type="email" placeholder="Email Anda" required style="padding: 10px; border-radius: 5px;">
+        <textarea rows="5" placeholder="Tulis pesan Anda..." required style="padding: 10px; border-radius: 5px;"></textarea>
+        <button type="submit" style="padding: 12px; background-color: #002B5B; color: white; border: none; border-radius: 5px; cursor: pointer;">Kirim Pesan</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+      <section id="perusahaan" class="content-section">
+  <h2 style="font-size: 32px; color: #002B5B;">Profil Perusahaan</h2>
+  <p style="font-size: 18px; line-height: 1.8;">
+    Kami percaya bahwa kemajuan teknologi harus sejalan dengan nilai-nilai profesionalisme dan integritas. Oleh karena itu, PT Nusantara Jaya terus berinovasi dalam memberikan solusi digital bagi masa depan bangsa.
+  </p>
+
+  <div class="company-info">
+    <div style="flex: 1; min-width: 280px;">
+      <img src="img/kantor.jpg.jpeg" alt="Kantor Pusat">
+      <p style="margin-top: 10px;">
+        Kantor pusat kami terletak di jantung kota Jakarta, menjadi pusat operasional dan inovasi kami dalam menghadirkan solusi digital yang terintegrasi.
+      </p>
+    </div>
+
+    <div style="flex: 1; min-width: 280px;">
+      <img src="img/tim.jpg.jpeg" alt="Tim Profesional">
+      <p style="margin-top: 10px;">
+        Kami memiliki tim yang terdiri dari profesional muda dan berpengalaman yang siap membantu klien mencapai efisiensi digital secara berkelanjutan.
+      </p>
+    </div>
+  </div>
+
+  <div class="company-info">
+    <div style="flex: 1; min-width: 280px;">
+      <img src="img/sertifikat.jpg" alt="Sertifikasi ISO">
+      <p style="margin-top: 10px;">
+        PT Nusantara Jaya telah tersertifikasi ISO dalam manajemen mutu dan keamanan informasi, menjamin kualitas layanan teknologi kami.
+      </p>
+    </div>
+
+    <div style="flex: 1; min-width: 280px;">
+      <img src="img/mitra.jpg" alt="Mitra Strategis">
+      <p style="margin-top: 10px;">
+        Kami telah bermitra dengan lebih dari 50 instansi pemerintah dan swasta, termasuk perusahaan BUMN strategis dan lembaga pendidikan tinggi.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="lowongan" class="content-section">
+  <h2>Lowongan Kerja & Magang</h2>
+  <input type="text" id="filterSearch" placeholder="Cari posisi/perusahaan..." style="width:100%;padding:10px;margin-bottom:20px;" oninput="renderLowongan()">
+  <div id="lowonganList"></div>
+</section>
+
+<section id="sertifikat" class="content-section">
+  <h2>Cek Sertifikat</h2>
+  <input type="text" id="sertNo" placeholder="Nomor Sertifikat..." style="width:100%;padding:10px;margin-bottom:10px;">
+  <button onclick="cekSertifikat()" style="padding:10px 20px; cursor:pointer;">Periksa</button>
+  <div id="cekResult" style="margin-top:10px;"></div>
+</section>
+    </div>
+  </div>
+
+  <script>
+    
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      if (user && pass) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("app").style.display = "flex";
+        tampilkan("beranda");
+      } else {
+        alert("Isi username dan password terlebih dahulu.");
+      }
+    }
+
+    function tampilkan(id) {
+      const semua = document.querySelectorAll('.content-section');
+      semua.forEach(bagian => bagian.style.display = 'none');
+      const aktif = document.getElementById(id);
+      if (aktif) aktif.style.display = 'block';
+
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('show');
+      }
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('show');
+    }
+
+    function showRegister() {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("register").style.display = "flex";
+    }
+
+    function showLogin() {
+      document.getElementById("register").style.display = "none";
+      document.getElementById("login").style.display = "flex";
+    }
+
+    function daftar() {
+      const nama = document.getElementById("reg-nama").value;
+      const username = document.getElementById("reg-username").value;
+      const password = document.getElementById("reg-password").value;
+      if (nama && username && password) {
+        alert("Pendaftaran berhasil! Silakan login.");
+        showLogin();
+      } else {
+        alert("Semua kolom harus diisi.");
+      }
+    }
+
+  </script>
+</body>
+</html>
